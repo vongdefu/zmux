@@ -60,7 +60,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          tagName: app-v__VERSION__ # cargo.toml 中的 version 值
           releaseName: "App v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           # 自动生成 GitHub Release 更改日志（包含关联的 Issue、PR 和贡献者）
@@ -70,14 +70,3 @@ jobs:
           # 是否为预发布版本
           prerelease: false
           args: ${{ matrix.args }}
-
-      # 6. 将静态产物推送到个人主页仓库
-      - name: Deploy Web to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          # 使用 Actions 自带的 Token 即可，无需手动配置 Secret
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # 部署到当前仓库的 gh-pages 分支
-          branch: gh-pages
-          # 打包产物所在的本地目录
-          folder: dist
