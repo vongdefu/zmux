@@ -18,8 +18,8 @@ jobs:
         # 构建矩阵：同时在 Windows、macOS 和 Ubuntu 上运行构建
         include:
           - platform: "macos-latest"
-          - platform: "ubuntu-22.04" # 推荐使用 22.04，编译出的 AppImage 兼容性更好
-          - platform: "windows-latest"
+          # - platform: "ubuntu-22.04" # 推荐使用 22.04，编译出的 AppImage 兼容性更好
+          # - platform: "windows-latest"
 
     runs-on: ${{ matrix.platform }}
 
@@ -32,11 +32,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: latest
+          cache: "yarn"
 
       # 2. 如果是 Linux 环境，需要安装 Tauri 所需的系统依赖
       - name: Install Linux dependencies (Ubuntu only)
@@ -56,9 +52,7 @@ jobs:
 
       # 4. 安装前端依赖（允许运行构建脚本）
       - name: Install frontend dependencies
-        run: |
-          pnpm config set only-built-dependencies esbuild
-          pnpm install
+        run: yarn install
 
       # 5. 使用 Tauri 官方 Action 执行构建并发布
       - name: Build and Release

@@ -2,6 +2,8 @@
 
 一款音乐播放软件，支持 网易云 、 QQ音乐 、 酷我音乐 、 JOOX等平台的音源。基于 tauri 跨平台多终端。
 
+在线体验： https://vongdefu.github.io/zmux .
+
 ## 功能介绍
 
 - 歌曲搜索
