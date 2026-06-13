@@ -1,0 +1,72 @@
+name: Publish Release
+
+on:
+  push:
+    # 当推送到 release 分支，或者推送以 v 开头的版本标签(如 v1.0.0)时触发
+    tags:
+      - "v*"
+    branches:
+      - release
+
+jobs:
+  publish:
+    permissions:
+      contents: write # 允许创建 Release 并上传资产
+    strategy:
+      fail-fast: false
+      matrix:
+        # 构建矩阵：同时在 Windows、macOS 和 Ubuntu 上运行构建
+        include:
+          - platform: "macos-latest"
+          - platform: "ubuntu-22.04" # 推荐使用 22.04，编译出的 AppImage 兼容性更好
+          - platform: "windows-latest"
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 1. 初始化前端环境 (根据你使用的包管理器调整，这里以 pnpm 为例)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
+
+      # 2. 如果是 Linux 环境，需要安装 Tauri 所需的系统依赖
+      - name: Install Linux dependencies (Ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      # 3. 初始化 Rust 环境（使用缓存加速构建）
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      # 4. 安装前端依赖
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      # 5. 使用 Tauri 官方 Action 执行构建并发布
+      - name: Build and Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # 自动生成 GitHub Release 更改日志（包含关联的 Issue、PR 和贡献者）
+          generateReleaseNotes: true
+          # 是否作为草稿（建议先设为 true，确认无误后在 GitHub 手动改成发布；或设为 false 直接发布）
+          releaseDraft: true
+          # 是否为预发布版本
+          prerelease: false
