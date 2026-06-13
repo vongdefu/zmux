@@ -54,9 +54,11 @@ jobs:
         with:
           workspaces: "./src-tauri -> target"
 
-      # 4. 安装前端依赖
+      # 4. 安装前端依赖（允许运行构建脚本）
       - name: Install frontend dependencies
-        run: pnpm install
+        run: |
+          pnpm config set only-built-dependencies esbuild
+          pnpm install
 
       # 5. 使用 Tauri 官方 Action 执行构建并发布
       - name: Build and Release
