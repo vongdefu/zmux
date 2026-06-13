@@ -56,7 +56,7 @@ jobs:
 
       # 5. 使用 Tauri 官方 Action 执行构建并发布
       - name: Build and Release
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -70,3 +70,14 @@ jobs:
           # 是否为预发布版本
           prerelease: false
           args: ${{ matrix.args }}
+
+      # 6. 将静态产物推送到个人主页仓库
+      - name: Deploy Web to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          # 使用 Actions 自带的 Token 即可，无需手动配置 Secret
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # 部署到当前仓库的 gh-pages 分支
+          branch: gh-pages
+          # 打包产物所在的本地目录
+          folder: dist
