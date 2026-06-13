@@ -60,9 +60,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          releaseName: "App v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
           # 自动生成 GitHub Release 更改日志（包含关联的 Issue、PR 和贡献者）
           generateReleaseNotes: true
           # 是否作为草稿（建议先设为 true，确认无误后在 GitHub 手动改成发布；或设为 false 直接发布）
-          releaseDraft: true
+          releaseDraft: false
           # 是否为预发布版本
           prerelease: false
+          args: ${{ matrix.args }}
