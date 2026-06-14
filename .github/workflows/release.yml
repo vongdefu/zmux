@@ -18,8 +18,8 @@ jobs:
         # 构建矩阵：同时在 Windows、macOS 和 Ubuntu 上运行构建
         include:
           - platform: "macos-latest"
-          # - platform: "ubuntu-22.04" # 推荐使用 22.04，编译出的 AppImage 兼容性更好
-          # - platform: "windows-latest"
+          - platform: "ubuntu-22.04" # 推荐使用 22.04，编译出的 AppImage 兼容性更好
+          - platform: "windows-latest"
 
     runs-on: ${{ matrix.platform }}
 

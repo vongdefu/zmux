@@ -1,7 +1,7 @@
 [package]
-name = "Zmux"
+name = "zmux"
 version = "1.0.0"
-description = "Zmux"
+description = "zmux"
 authors = ["vongdefu"]
 edition = "2021"
 
