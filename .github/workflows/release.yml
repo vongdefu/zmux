@@ -16,7 +16,6 @@ jobs:
       matrix:
         include:
           - platform: "macos-latest"
-          - platform: "ubuntu-22.04"
           - platform: "windows-latest"
 
     runs-on: ${{ matrix.platform }}
@@ -68,9 +67,18 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      # 6. 【精简合并】仅在 Ubuntu 环境下，顺便将已经构建好的 dist 目录推送到 gh-pages 分支
-      - name: Deploy Web to GitHub Pages (Ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04' # 👈 关键：加这个判断，确保只有一台机器去提交网页，绝不冲突
+      # 6. 【基于 macOS 部署 Web】单独重新构建一次网页端产物
+      # 显式清除 TAURI 环境变量，迫使 vite.config.js 走 base: "/zmux/" 逻辑，生成完美的网页端 dist 目录
+      - name: Rebuild Web frontend for GitHub Pages (macOS only)
+        if: matrix.platform == 'macos-latest' # 👈 严格限制仅在 macOS 平台上运行
+        run: |
+          unset TAURI_ENV_PLATFORM
+          unset TAURI_PLATFORM
+          yarn build
+
+      # 7. 将刚刚生成的、适配 GitHub Pages 路径的 dist 目录推送到 gh-pages 分支
+      - name: Deploy Web to GitHub Pages (macOS only)
+        if: matrix.platform == 'macos-latest' # 👈 严格限制仅在 macOS 平台上运行
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
