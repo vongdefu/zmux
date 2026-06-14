@@ -53,6 +53,13 @@ https://secure.shadowsocks.au/aff.php?aff=20045
 - 人工服务响应专业、即时。
 - ......
 
+## 推送之后触发流水线
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
 ## Star History
 
 <a href="https://www.star-history.com/?repos=vongdefu%2Fzmux&type=date&legend=bottom-right">
