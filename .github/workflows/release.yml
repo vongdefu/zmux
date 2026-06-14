@@ -84,14 +84,14 @@ jobs:
           unset TAURI_PLATFORM
           yarn build
 
-      # 7. 将刚刚生成的、适配 GitHub Pages 路径的 dist 目录推送到 gh-pages 分支
+      # 7. 将 dist 目录上传为 GitHub Pages 的官方构建产物 (Artifact)
       - name: Upload Pages Artifact (macOS only)
         if: matrix.platform == 'macos-latest'
         uses: actions/upload-pages-artifact@v3
         with:
           path: "dist" # 指定上传编译出的 dist 文件夹
 
-      # 8. 【关键改动】直接将产物部署到 GitHub Pages
+      # 8. 直接将产物部署到 GitHub Pages
       - name: Deploy to GitHub Pages (macOS only)
         if: matrix.platform == 'macos-latest'
         uses: actions/deploy-pages@v4
