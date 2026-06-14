@@ -7,10 +7,18 @@ on:
     branches:
       - release
 
+permissions:
+  contents: write # 允许创建 Release 并上传桌面端资产
+  pages: write # 允许部署到 GitHub Pages
+  id-token: write # 官方 Actions 部署 Pages 必需的身份验证
+
+# 确保并发部署时，新的部署会取消排队中的旧部署
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   publish:
-    permissions:
-      contents: write # 允许创建 Release 并上传资产，同时允许推送到 gh-pages 分支
     strategy:
       fail-fast: false
       matrix:
@@ -77,10 +85,13 @@ jobs:
           yarn build
 
       # 7. 将刚刚生成的、适配 GitHub Pages 路径的 dist 目录推送到 gh-pages 分支
-      - name: Deploy Web to GitHub Pages (macOS only)
-        if: matrix.platform == 'macos-latest' # 👈 严格限制仅在 macOS 平台上运行
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload Pages Artifact (macOS only)
+        if: matrix.platform == 'macos-latest'
+        uses: actions/upload-pages-artifact@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          folder: dist
+          path: "dist" # 指定上传编译出的 dist 文件夹
+
+      # 8. 【关键改动】直接将产物部署到 GitHub Pages
+      - name: Deploy to GitHub Pages (macOS only)
+        if: matrix.platform == 'macos-latest'
+        uses: actions/deploy-pages@v4
