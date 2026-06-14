@@ -1,3 +1,4 @@
+import "../css/index.css" // 👈 假设 index.css 在 src/css/index.css
 ;(function () {
   const translations = {
     zh: {
