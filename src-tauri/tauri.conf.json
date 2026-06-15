@@ -22,6 +22,9 @@
     }
   },
   "bundle": {
+    "iOS": {
+      "developmentTeam": "233QHB3XPJ"
+    },
     "active": true,
     "targets": "all",
     "icon": [
