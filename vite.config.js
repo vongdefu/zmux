@@ -19,14 +19,15 @@ export default defineConfig(async () => ({
   server: {
     port: 1420,
     strictPort: true,
-    host: host || false,
-    hmr: host
-      ? {
-          protocol: "ws",
-          host,
-          port: 1421,
-        }
-      : undefined,
+    // 👇 修改这里：如果是移动端开发，强制为 true（即 0.0.0.0），否则用原逻辑
+    host: true,
+
+    // 👇 修改这里：确保 HMR（热更新）在移动端或模拟器上也能连通
+    hmr: {
+      protocol: "ws",
+      host: host || "0.0.0.0",
+      port: 1421,
+    },
     watch: {
       // 3. tell Vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],

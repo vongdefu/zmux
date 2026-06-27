@@ -208,7 +208,7 @@ function onEnded() {
   position: absolute;
   left: 16px;
   right: 16px;
-  bottom: 78px;
+  bottom: calc(78px + env(safe-area-inset-bottom));
   z-index: 20;
   min-height: 66px;
   display: grid;
