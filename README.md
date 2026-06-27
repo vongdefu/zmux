@@ -24,7 +24,27 @@
 
 ## Screenshots
 
-TODO
+<details>
+
+<summary>WEB</summary>
+
+![资料库](image/README/1782551027115.png)
+![搜索](image/README/1782550992286.png)
+![歌单](image/README/1782551047765.png)
+![播放容器](image/README/1782551081235.png)
+
+</details>
+
+<details>
+
+<summary>iOS</summary>
+
+![1782551519408](image/README/1782551519408.png)
+![1782551557356](image/README/1782551557356.png)
+![1782551568793](image/README/1782551568793.png)
+![1782551583969](image/README/1782551583969.png)
+
+</details>
 
 ## TODO
 
@@ -68,6 +88,26 @@ https://secure.shadowsocks.au/aff.php?aff=20045
 ## 开发过程
 
 ```bash
+## 查看 环境
+yarn tauri info
+
+## 启动 dev 客户端
+yarn tauri dev
+
+## 构建
+yarn tauri build
+
+## 增加 ios 客户端
+yarn tauri ios init
+
+## 安装xcode后在真机上测试
+yarn tauri ios dev
+
+## 构建，之后可以通过xcode工具把软件安装到真机上
+yarn tauri ios build
+
+## 构建，在模拟器上构建
+yarn tauri ios dev "iPhone 17 Pro Max"
 
 git tag v1.0.0
 git push origin v1.0.0
