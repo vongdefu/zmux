@@ -4,6 +4,9 @@
 
 在线体验： https://vongdefu.github.io/zmux .
 
+> [!NOTE]
+> 项目还在快速迭代过程中，并且由于个性化歌曲信息都存在本地，所以有丢失歌单和收藏的风险，作者正在快马加鞭修复....
+
 ## 功能介绍
 
 - 歌曲搜索
@@ -28,10 +31,7 @@
 
 <summary>WEB</summary>
 
-![资料库](image/README/1782551027115.png)
-![搜索](image/README/1782550992286.png)
-![歌单](image/README/1782551047765.png)
-![播放容器](image/README/1782551081235.png)
+// TODO
 
 </details>
 
@@ -39,10 +39,7 @@
 
 <summary>iOS</summary>
 
-![1782551519408](image/README/1782551519408.png)
-![1782551557356](image/README/1782551557356.png)
-![1782551568793](image/README/1782551568793.png)
-![1782551583969](image/README/1782551583969.png)
+// TODO
 
 </details>
 
