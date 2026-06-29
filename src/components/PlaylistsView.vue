@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import TrackList from "./TrackList.vue"
 
 const props = defineProps({
@@ -12,6 +12,16 @@ const props = defineProps({
 const newName = ref("")
 const selectedId = ref(props.store.state.playlists[0]?.id || "")
 const fileInput = ref(null)
+const viewMode = ref("mine")
+
+watch(viewMode, (mode) => {
+  if (
+    mode === "recommended" &&
+    !props.store.state.recommendedPlaylists.length
+  ) {
+    props.store.fetchRecommendedPlaylists()
+  }
+})
 
 function create() {
   const playlist = props.store.createPlaylist(newName.value)
@@ -56,51 +66,128 @@ function importJson(event) {
       <h1>歌单</h1>
     </div>
 
-    <form class="create-card" @submit.prevent="create">
-      <input v-model="newName" placeholder="新歌单名称" />
-      <button>创建</button>
-    </form>
-
-    <div class="tool-row">
-      <button @click="store.addCurrentToPlaylist(selectedId)">
-        加入当前歌曲
-      </button>
-      <button @click="fileInput?.click()">导入</button>
-      <button @click="downloadJson">导出</button>
-      <input
-        ref="fileInput"
-        hidden
-        type="file"
-        accept="application/json,.json"
-        @change="importJson"
-      />
-    </div>
-
-    <div class="playlist-strip">
+    <div class="view-toggle">
       <button
-        v-for="playlist in store.state.playlists"
-        :key="playlist.id"
-        :class="{ active: selectedId === playlist.id }"
-        @click="selectedId = playlist.id"
+        :class="{ active: viewMode === 'mine' }"
+        @click="viewMode = 'mine'"
       >
-        <strong>{{ playlist.name }}</strong>
-        <span>{{ playlist.tracks.length }} 首</span>
+        我的歌单
+      </button>
+      <button
+        :class="{ active: viewMode === 'recommended' }"
+        @click="viewMode = 'recommended'"
+      >
+        推荐
       </button>
     </div>
 
-    <TrackList
-      :tracks="
-        store.state.playlists.find((playlist) => playlist.id === selectedId)
-          ?.tracks || []
-      "
-      :current-track="store.state.currentTrack"
-      :is-favorite="store.isFavorite"
-      empty-text="选择歌单后，可把当前播放歌曲加入这里"
-      :removable="true"
-      @play="(_, index) => store.playFromList('playlist', index, selectedId)"
-      @favorite="store.toggleFavorite"
-      @remove="(track) => store.removeFromPlaylist(selectedId, track)"
-    />
+    <!-- 我的歌单 -->
+    <template v-if="viewMode === 'mine'">
+      <form class="create-card" @submit.prevent="create">
+        <input v-model="newName" placeholder="新歌单名称" />
+        <button>创建</button>
+      </form>
+
+      <div class="tool-row">
+        <button @click="store.addCurrentToPlaylist(selectedId)">
+          加入当前歌曲
+        </button>
+        <button @click="fileInput?.click()">导入</button>
+        <button @click="downloadJson">导出</button>
+        <input
+          ref="fileInput"
+          hidden
+          type="file"
+          accept="application/json,.json"
+          @change="importJson"
+        />
+      </div>
+
+      <div class="playlist-strip">
+        <button
+          v-for="playlist in store.state.playlists"
+          :key="playlist.id"
+          :class="{ active: selectedId === playlist.id }"
+          @click="selectedId = playlist.id"
+        >
+          <strong>{{ playlist.name }}</strong>
+          <span>{{ playlist.tracks.length }} 首</span>
+        </button>
+      </div>
+
+      <TrackList
+        :tracks="
+          store.state.playlists.find((playlist) => playlist.id === selectedId)
+            ?.tracks || []
+        "
+        :current-track="store.state.currentTrack"
+        :is-favorite="store.isFavorite"
+        empty-text="选择歌单后，可把当前播放歌曲加入这里"
+        :removable="true"
+        @play="(_, index) => store.playFromList('playlist', index, selectedId)"
+        @favorite="store.toggleFavorite"
+        @remove="(track) => store.removeFromPlaylist(selectedId, track)"
+      />
+    </template>
+
+    <!-- 推荐歌单 -->
+    <template v-if="viewMode === 'recommended'">
+      <div v-if="store.state.recommendedLoading" class="loading-state">
+        加载中...
+      </div>
+
+      <template v-else-if="store.state.recommendedView === 'browse'">
+        <div class="recommend-grid">
+          <button
+            v-for="playlist in store.state.recommendedPlaylists"
+            :key="playlist.id"
+            class="recommend-card"
+            @click="store.selectRecommendedPlaylist(playlist.id)"
+          >
+            <div class="recommend-card-cover">
+              <span>{{ playlist.name.slice(0, 2) }}</span>
+            </div>
+            <strong>{{ playlist.name }}</strong>
+          </button>
+        </div>
+      </template>
+
+      <template v-else>
+        <button
+          class="back-button"
+          @click="store.state.recommendedView = 'browse'"
+        >
+          ← 返回推荐列表
+        </button>
+        <h2 class="selected-playlist-name">
+          {{
+            store.state.recommendedPlaylists.find(
+              (p) => p.id === store.state.selectedRecommendedId,
+            )?.name || ""
+          }}
+        </h2>
+        <TrackList
+          :tracks="
+            store.state.recommendedPlaylists.find(
+              (p) => p.id === store.state.selectedRecommendedId,
+            )?.tracks || []
+          "
+          :current-track="store.state.currentTrack"
+          :is-favorite="store.isFavorite"
+          empty-text="歌单暂无歌曲"
+          :removable="false"
+          @play="
+            (_, index) =>
+              store.playFromList(
+                'recommended',
+                index,
+                store.state.selectedRecommendedId,
+              )
+          "
+          @favorite="store.toggleFavorite"
+        />
+      </template>
+    </template>
   </section>
 </template>
 
@@ -193,5 +280,89 @@ function importJson(event) {
   color: currentColor;
   opacity: 0.72;
   font-size: 13px;
+}
+
+.view-toggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(118, 118, 128, 0.14);
+}
+
+.view-toggle button {
+  border: 0;
+  border-radius: 11px;
+  padding: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-toggle button.active {
+  background: white;
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.recommend-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.recommend-card {
+  border: 0;
+  border-radius: 16px;
+  padding: 0 0 12px;
+  background: white;
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+}
+
+.recommend-card strong {
+  display: block;
+  margin: 10px 12px 0;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.recommend-card-cover {
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #fa233b, #ff7a90);
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.back-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(250, 35, 59, 0.1);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.selected-playlist-name {
+  margin: 0;
+  font-size: 20px;
+}
+
+.loading-state {
+  padding: 28px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 </style>

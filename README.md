@@ -122,3 +122,7 @@ git push origin v1.0.0
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=vongdefu/zmux&type=date&legend=top-left" />
  </picture>
 </a>
+
+## Inspired
+
+[musicsquare](https://github.com/CharlesPikachu/musicsquare)

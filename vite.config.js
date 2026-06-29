@@ -32,5 +32,15 @@ export default defineConfig(async () => ({
       // 3. tell Vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],
     },
+    proxy: {
+      "/api/proxy/netease": {
+        target: "https://music.163.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/proxy\/netease/, ""),
+        headers: {
+          Referer: "https://music.163.com/",
+        },
+      },
+    },
   },
 }))

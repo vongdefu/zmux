@@ -14,6 +14,8 @@ const props = defineProps({
 const audioRef = ref(null)
 const activeLineRef = ref(null)
 const lyricsRef = ref(null)
+const songLabelRef = ref(null)
+const needsScroll = ref(false)
 
 const state = props.store.state
 const progress = computed(() =>
@@ -24,6 +26,11 @@ const progress = computed(() =>
 const playModeIcon = computed(
   () => ({ list: "↻", single: "①", shuffle: "↝" })[state.playMode] || "↻",
 )
+const labelText = computed(() => {
+  const title = state.currentTrack?.title || "未在播放"
+  const artist = state.currentTrack?.artist || "等待播放"
+  return `${title} — ${artist}`
+})
 
 watch(
   () => state.currentTrack?.audioUrl,
@@ -46,6 +53,42 @@ watch(
     activeLineRef.value?.scrollIntoView({ block: "center", behavior: "smooth" })
   },
 )
+
+watch(
+  labelText,
+  async () => {
+    needsScroll.value = false
+    await nextTick()
+    if (songLabelRef.value) {
+      needsScroll.value =
+        songLabelRef.value.scrollWidth > songLabelRef.value.clientWidth
+    }
+  },
+  { immediate: true },
+)
+
+function onPlay() {
+  props.store.updateAudioState({ isPlaying: true, statusText: "正在播放" })
+  props.store.resetSkipCounter()
+}
+
+function onPause() {
+  props.store.updateAudioState({ isPlaying: false, statusText: "已暂停" })
+}
+
+function onAudioError() {
+  const list = props.store.activeList.value
+  state.consecutiveSkipCount++
+  if (list.length > 0 && state.consecutiveSkipCount < list.length) {
+    props.store.showToast("播放出错，已自动跳过")
+    setTimeout(() => props.store.nextTrack(), 800)
+  } else {
+    props.store.showToast("当前列表所有歌曲都无法播放")
+    state.isPlaying = false
+    state.statusText = "播放失败"
+    state.consecutiveSkipCount = 0
+  }
+}
 
 function togglePlay() {
   if (!audioRef.value?.src) return
@@ -99,31 +142,73 @@ function onEnded() {
     preload="metadata"
     @timeupdate="onTimeUpdate"
     @loadedmetadata="onTimeUpdate"
-    @play="
-      props.store.updateAudioState({ isPlaying: true, statusText: '正在播放' })
-    "
-    @pause="
-      props.store.updateAudioState({ isPlaying: false, statusText: '已暂停' })
-    "
+    @play="onPlay"
+    @pause="onPause"
     @ended="onEnded"
+    @error="onAudioError"
   />
 
-  <div
-    v-if="state.currentTrack && !state.playerOpen"
-    class="mini-player"
-    role="button"
-    tabindex="0"
-    @click="state.playerOpen = true"
-    @keydown.enter="state.playerOpen = true"
-  >
-    <TrackArtwork :track="state.currentTrack" size="small" />
-    <span class="mini-copy">
-      <strong>{{ state.currentTrack.title }}</strong>
-      <span>{{ state.currentTrack.artist || state.statusText }}</span>
-    </span>
-    <IconButton label="播放或暂停" tone="primary" @click.stop="togglePlay">
-      {{ state.isPlaying ? "Ⅱ" : "▶" }}
-    </IconButton>
+  <div v-if="state.currentTrack && !state.playerOpen" class="mini-player">
+    <div
+      class="mini-cover"
+      role="button"
+      tabindex="0"
+      @click="state.playerOpen = true"
+      @keydown.enter="state.playerOpen = true"
+    >
+      <TrackArtwork :track="state.currentTrack" size="small" />
+    </div>
+
+    <div class="mini-info">
+      <div class="mini-song-row">
+        <span ref="songLabelRef" class="mini-song-measure" aria-hidden="true">{{
+          labelText
+        }}</span>
+        <span v-if="needsScroll" class="mini-song-track">
+          <span class="mini-song-item">{{ labelText }}</span>
+          <span class="mini-song-gap">•</span>
+          <span class="mini-song-item">{{ labelText }}</span>
+        </span>
+        <span v-else class="mini-song-label">{{ labelText }}</span>
+      </div>
+
+      <div class="mini-controls-row">
+        <button
+          class="mini-ctrl"
+          :title="
+            { list: '列表循环', single: '单曲循环', shuffle: '随机播放' }[
+              state.playMode
+            ]
+          "
+          @click="cyclePlayMode"
+        >
+          {{ playModeIcon }}
+        </button>
+        <button
+          class="mini-ctrl"
+          title="上一首"
+          @click="props.store.previousTrack"
+        >
+          ‹‹
+        </button>
+        <IconButton label="播放或暂停" tone="primary" @click.stop="togglePlay">
+          {{ state.isPlaying ? "Ⅱ" : "▶" }}
+        </IconButton>
+        <button class="mini-ctrl" title="下一首" @click="props.store.nextTrack">
+          ››
+        </button>
+        <button
+          class="mini-ctrl"
+          :class="{ active: props.store.isFavorite(state.currentTrack) }"
+          :title="
+            props.store.isFavorite(state.currentTrack) ? '取消收藏' : '收藏'
+          "
+          @click="props.store.toggleFavorite()"
+        >
+          {{ props.store.isFavorite(state.currentTrack) ? "♥" : "♡" }}
+        </button>
+      </div>
+    </div>
   </div>
 
   <Transition name="sheet">
@@ -208,12 +293,11 @@ function onEnded() {
   position: absolute;
   left: 16px;
   right: 16px;
-  bottom: calc(78px + env(safe-area-inset-bottom));
+  bottom: 78px;
   z-index: 20;
-  min-height: 66px;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 18px;
@@ -225,22 +309,108 @@ function onEnded() {
   text-align: left;
 }
 
-.mini-copy {
-  min-width: 0;
-  display: grid;
-  gap: 3px;
+.mini-cover {
+  cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.16s ease;
 }
 
-.mini-copy strong,
-.mini-copy span {
+.mini-cover:active {
+  transform: scale(0.94);
+}
+
+.mini-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mini-song-row {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.mini-song-measure {
+  position: absolute;
+  visibility: hidden;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.mini-song-label {
+  display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: 15px;
+  font-weight: 700;
 }
 
-.mini-copy span {
+.mini-song-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: mini-marquee 10s linear infinite;
+}
+
+.mini-song-item {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.mini-song-gap {
+  padding: 0 16px;
+  color: var(--text-tertiary);
+}
+
+@keyframes mini-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.mini-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.mini-ctrl {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: transparent;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.mini-ctrl:active {
+  background: rgba(118, 118, 128, 0.12);
+}
+
+.mini-ctrl.active {
+  color: var(--accent);
+}
+
+.mini-controls-row :deep(.icon-button) {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
 }
 
 .player-sheet {
