@@ -80,6 +80,8 @@ input {
   overflow: hidden;
   border-radius: 34px;
   background: var(--screen);
+  padding-top: 58px;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .top-bar {
@@ -231,6 +233,11 @@ input {
 
   .app-screen {
     border-radius: 0;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .toast {
+    bottom: calc(130px + env(safe-area-inset-bottom));
   }
 
   .top-bar {

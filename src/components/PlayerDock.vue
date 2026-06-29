@@ -293,15 +293,15 @@ function onEnded() {
   position: absolute;
   left: 16px;
   right: 16px;
-  bottom: 78px;
+  bottom: 10px;
   z-index: 20;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 18px;
-  padding: 9px;
+  padding: 10px;
   background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(22px);
   color: var(--text-primary);
@@ -332,13 +332,27 @@ function onEnded() {
   position: relative;
   overflow: hidden;
   white-space: nowrap;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
 }
 
 .mini-song-measure {
   position: absolute;
   visibility: hidden;
   white-space: nowrap;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   pointer-events: none;
 }
@@ -348,51 +362,53 @@ function onEnded() {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
 .mini-song-track {
   display: inline-block;
   white-space: nowrap;
-  animation: mini-marquee 10s linear infinite;
+  animation: mini-marquee 12s linear infinite;
 }
 
 .mini-song-item {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
 .mini-song-gap {
-  padding: 0 16px;
+  padding: 0 20px;
   color: var(--text-tertiary);
 }
 
 @keyframes mini-marquee {
   0% {
-    transform: translateX(0);
+    transform: translateX(8px);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% + 8px));
   }
 }
 
 .mini-controls-row {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 
 .mini-ctrl {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border: 0;
   border-radius: 999px;
   display: grid;
   place-items: center;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 16px;
   cursor: pointer;
   transition:
     background 0.16s ease,
@@ -400,7 +416,7 @@ function onEnded() {
 }
 
 .mini-ctrl:active {
-  background: rgba(118, 118, 128, 0.12);
+  background: rgba(118, 118, 128, 0.14);
 }
 
 .mini-ctrl.active {
@@ -408,9 +424,9 @@ function onEnded() {
 }
 
 .mini-controls-row :deep(.icon-button) {
-  width: 32px;
-  height: 32px;
-  font-size: 14px;
+  width: 38px;
+  height: 38px;
+  font-size: 16px;
 }
 
 .player-sheet {

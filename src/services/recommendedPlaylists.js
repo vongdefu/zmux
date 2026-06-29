@@ -3,15 +3,15 @@ import { normalizeTrack } from "./musicApi"
 const DISCOVER_URL = "https://music.163.com/discover"
 
 const FALLBACK_PLAYLISTS = [
-  { id: "3778678", name: "云音乐热歌榜" },
-  { id: "3779629", name: "云音乐新歌榜" },
-  { id: "2884035", name: "云音乐飙升榜" },
-  { id: "19723756", name: "云音乐说唱榜" },
-  { id: "2250013", name: "抖音排行榜" },
-  { id: "7459562", name: "电竞音乐榜" },
-  { id: "108550346", name: "华语金曲" },
-  { id: "71385702", name: "怀旧经典" },
-  { id: "99160243", name: "独立小众" },
+  { id: "3778678", name: "云音乐热歌榜", cover: null },
+  { id: "3779629", name: "云音乐新歌榜", cover: null },
+  { id: "2884035", name: "云音乐飙升榜", cover: null },
+  { id: "19723756", name: "云音乐说唱榜", cover: null },
+  { id: "2250013", name: "抖音排行榜", cover: null },
+  { id: "7459562", name: "电竞音乐榜", cover: null },
+  { id: "108550346", name: "华语金曲", cover: null },
+  { id: "71385702", name: "怀旧经典", cover: null },
+  { id: "99160243", name: "独立小众", cover: null },
 ]
 
 function getIdFromUrl(url) {
@@ -35,8 +35,24 @@ function parseDiscoverHtml(html) {
     const name = (link.getAttribute("title") || link.textContent || "").trim()
     if (!name) return
 
+    // 封面图可能在 <a> 内部（子元素），也可能在父容器的兄弟节点中
+    // 网易云发现页结构: <li><img /><a href="/playlist?...">...</a></li>
+    let cover = link.querySelector("img")?.getAttribute("src") || null
+    if (!cover) {
+      const parent = link.closest("li, div[class]") || link.parentElement
+      if (parent) {
+        const img = parent.querySelector("img")
+        cover =
+          img?.getAttribute("src") ||
+          img?.getAttribute("data-src") ||
+          img?.getAttribute("data-original") ||
+          null
+      }
+    }
+    if (cover && cover.startsWith("//")) cover = "https:" + cover
+
     seen.add(playlistId)
-    playlists.push({ id: playlistId, name })
+    playlists.push({ id: playlistId, name, cover })
   })
 
   if (!playlists.length) {
