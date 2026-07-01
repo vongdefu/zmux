@@ -27,58 +27,63 @@
 
 ## Screenshots
 
-<table align="center">
+<table align="center" width="100%">
   <thead>
     <tr>
-      <th align="center" width="180">功能模块</th>
-      <th align="center" width="150">子模块</th>
-      <th align="center">功能截图</th>
+      <th align="center" width="200">功能模块</th>
+      <th align="center">界面截图</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td align="center"><b>主页</b></td>
-      <td colspan="2">
+      <td align="center">
         <img src="image/README/1782898483559.png" width="180" alt="主页">
       </td>
     </tr>
     <tr>
-      <td rowspan="3" align="center"><b>美好音乐</b></td>
-      <td align="center">推荐歌单</td>
+      <td align="center"><b>美好音乐</b></td>
       <td>
-        <img src="image/README/1782898941758.png" width="180" alt="歌单列表">
-        <img src="image/README/1782899029950.png" width="180" alt="歌单详情">
-      </td>
-    </tr>
-    <tr>
-      <td align="center">我的</td>
-      <td>
-        <img src="image/README/1782899240490.png" width="180" alt="我的歌单">
-        <img src="image/README/1782899278466.png" width="180" alt="我的收藏">
-        <img src="image/README/1782899306217.png" width="180" alt="历史记录">
-      </td>
-    </tr>
-    <tr>
-      <td align="center">歌曲播放</td>
-      <td>
-        <img src="image/README/1782899494910.png" width="180" alt="播放器">
-      </td>
+        <table width="100%" style="border: none; margin: 0; padding: 0;">
+          <tr>
+            <td width="120" align="center" style="border: none;">推荐歌单</td>
+            <td style="border: none;">
+              <img src="image/README/1782898941758.png" width="180" alt="歌单列表">
+              <img src="image/README/1782899029950.png" width="180" alt="歌单详情">
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="border: none;">我的</td>
+            <td style="border: none;">
+              <img src="image/README/1782899240490.png" width="180" alt="我的歌单">
+              <img src="image/README/1782899278466.png" width="180" alt="我的收藏">
+              <img src="image/README/1782899306217.png" width="180" alt="历史记录">
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="border: none;">歌曲播放</td>
+            <td style="border: none;">
+              <img src="image/README/1782899494910.png" width="180" alt="播放器">
+            </td>
+          </tr>
+        </table>
+        </td>
     </tr>
     <tr>
       <td align="center"><b>日程管理</b></td>
-      <td colspan="2">
+      <td align="center">
         <img src="image/README/1782899669618.png" width="180" alt="主页">
       </td>
     </tr>
     <tr>
       <td align="center"><b>习惯跟踪</b></td>
-      <td colspan="2">
+      <td align="center">
         <img src="image/README/1782899814490.png" width="180" alt="主页">
       </td>
-    </tr>  
+    </tr>
     <tr>
       <td align="center"><b>番茄时钟</b></td>
-      <td colspan="2">
+      <td align="center">
         <img src="image/README/1782899848283.png" width="180" alt="主页">
       </td>
     </tr>
