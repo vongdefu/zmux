@@ -30,16 +30,15 @@
 <table align="center">
   <thead>
     <tr>
-      <th align="center" width="150">大模块</th>
-      <th align="center" width="150">子功能 / 页面</th>
-      <th align="center">界面截图</th>
+      <th align="center" width="180">功能模块</th>
+      <th align="center" width="150">子模块</th>
+      <th align="center">功能截图</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td align="center"><b>整体主页</b></td>
-      <td align="center">应用主界面</td>
-      <td>
+      <td align="center"><b>主页</b></td>
+      <td colspan="2">
         <img src="image/README/1782898483559.png" width="180" alt="主页">
       </td>
     </tr>
@@ -52,7 +51,7 @@
       </td>
     </tr>
     <tr>
-      <td align="center">我的音乐</td>
+      <td align="center">我的</td>
       <td>
         <img src="image/README/1782899240490.png" width="180" alt="我的歌单">
         <img src="image/README/1782899278466.png" width="180" alt="我的收藏">
@@ -67,22 +66,19 @@
     </tr>
     <tr>
       <td align="center"><b>日程管理</b></td>
-      <td align="center">日程主页</td>
-      <td>
+      <td colspan="2">
         <img src="image/README/1782899669618.png" width="180" alt="主页">
       </td>
     </tr>
     <tr>
       <td align="center"><b>习惯跟踪</b></td>
-      <td align="center">习惯打卡</td>
-      <td>
+      <td colspan="2">
         <img src="image/README/1782899814490.png" width="180" alt="主页">
       </td>
-    </tr>
+    </tr>  
     <tr>
       <td align="center"><b>番茄时钟</b></td>
-      <td align="center">专注时钟</td>
-      <td>
+      <td colspan="2">
         <img src="image/README/1782899848283.png" width="180" alt="主页">
       </td>
     </tr>
