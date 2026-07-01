@@ -1,21 +1,21 @@
 <script setup>
-import { usePlayerStore } from "../stores/playerStore"
+import { usePlayerStore } from '../stores/playerStore'
 
-const emit = defineEmits(["navigate"])
+const emit = defineEmits(['navigate'])
 const store = usePlayerStore()
 
 const blocks = [
-  { id: "music", icon: "🎵", label: "美好音乐", active: true },
-  { id: "schedule", icon: "📅", label: "日程管理", active: false },
-  { id: "pomodoro", icon: "🍅", label: "番茄时钟", active: false },
-  { id: "habit", icon: "✅", label: "习惯跟踪", active: false },
+  { id: 'music', icon: '🎵', label: '美好音乐', active: true },
+  { id: 'schedule', icon: '📅', label: '日程管理', active: true },
+  { id: 'habit', icon: '✅', label: '习惯跟踪', active: true },
+  { id: 'pomodoro', icon: '🍅', label: '番茄时钟', active: true },
 ]
 
 function onBlockClick(block) {
   if (block.active) {
-    emit("navigate", block.id === "music" ? "music" : block.id)
+    emit('navigate', block.id === 'music' ? 'music' : block.id)
   } else {
-    store.showToast("即将上线，敬请期待")
+    store.showToast('即将上线，敬请期待')
   }
 }
 </script>
@@ -23,7 +23,7 @@ function onBlockClick(block) {
 <template>
   <div class="home-view">
     <header class="home-hero">
-      <h1>ZMUX</h1>
+      <h1>ZMUSIC</h1>
       <p>你的专属音乐空间</p>
     </header>
 
@@ -88,9 +88,7 @@ function onBlockClick(block) {
   background: white;
   cursor: pointer;
   text-align: left;
-  transition:
-    transform 0.16s ease,
-    box-shadow 0.16s ease;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .home-block:active {

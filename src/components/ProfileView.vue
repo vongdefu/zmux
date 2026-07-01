@@ -10,14 +10,14 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(["back"])
+const emit = defineEmits(['back'])
 
-const activeTab = ref("playlists")
+const activeTab = ref('playlists')
 
 const tabs = [
-  { id: "playlists", label: "我的歌单" },
-  { id: "favorites", label: "我的收藏" },
-  { id: "history", label: "历史记录" },
+  { id: 'playlists', label: '我的歌单' },
+  { id: 'favorites', label: '我的收藏' },
+  { id: 'history', label: '历史记录' },
 ]
 
 const favoriteCount = computed(() => props.store.state.favorites.length)
@@ -41,17 +41,14 @@ const historyCount = computed(() => props.store.state.playHistory.length)
         @click="activeTab = tab.id"
       >
         {{ tab.label }}
-        <span v-if="tab.id === 'favorites'" class="tab-count">{{
-          favoriteCount
-        }}</span>
-        <span v-else-if="tab.id === 'history'" class="tab-count">{{
-          historyCount
-        }}</span>
+        <span v-if="tab.id === 'favorites'" class="tab-count">{{ favoriteCount }}</span>
+        <span v-else-if="tab.id === 'history'" class="tab-count">{{ historyCount }}</span>
       </button>
     </nav>
 
     <!-- 内容区 -->
     <div class="profile-content">
+
       <!-- 我的歌单 -->
       <PlaylistsView v-if="activeTab === 'playlists'" :store="store" />
 
@@ -78,6 +75,7 @@ const historyCount = computed(() => props.store.state.playHistory.length)
         @play="(_, index) => store.playTrack(store.state.playHistory[index])"
         @favorite="store.toggleFavorite"
       />
+
     </div>
   </div>
 </template>
@@ -141,7 +139,7 @@ const historyCount = computed(() => props.store.state.playHistory.length)
 }
 
 .profile-tabs button.active::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   right: 0;

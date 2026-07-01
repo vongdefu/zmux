@@ -1,4 +1,4 @@
-const LIBRARY_STORAGE_KEY = "pikachu-music-library-v1"
+const LIBRARY_STORAGE_KEY = "zmux-music-v1"
 
 const TRACK_KEYS = [
   "uid",

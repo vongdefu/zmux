@@ -27,8 +27,8 @@ const playModeIcon = computed(
   () => ({ list: "↻", single: "①", shuffle: "↝" })[state.playMode] || "↻",
 )
 const labelText = computed(() => {
-  const title = state.currentTrack?.title || "未在播放"
-  const artist = state.currentTrack?.artist || "等待播放"
+  const title = state.currentTrack?.title || '未在播放'
+  const artist = state.currentTrack?.artist || '等待播放'
   return `${title} — ${artist}`
 })
 
@@ -60,32 +60,31 @@ watch(
     needsScroll.value = false
     await nextTick()
     if (songLabelRef.value) {
-      needsScroll.value =
-        songLabelRef.value.scrollWidth > songLabelRef.value.clientWidth
+      needsScroll.value = songLabelRef.value.scrollWidth > songLabelRef.value.clientWidth
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 function onPlay() {
-  props.store.updateAudioState({ isPlaying: true, statusText: "正在播放" })
+  props.store.updateAudioState({ isPlaying: true, statusText: '正在播放' })
   props.store.resetSkipCounter()
 }
 
 function onPause() {
-  props.store.updateAudioState({ isPlaying: false, statusText: "已暂停" })
+  props.store.updateAudioState({ isPlaying: false, statusText: '已暂停' })
 }
 
 function onAudioError() {
   const list = props.store.activeList.value
   state.consecutiveSkipCount++
   if (list.length > 0 && state.consecutiveSkipCount < list.length) {
-    props.store.showToast("播放出错，已自动跳过")
+    props.store.showToast('播放出错，已自动跳过')
     setTimeout(() => props.store.nextTrack(), 800)
   } else {
-    props.store.showToast("当前列表所有歌曲都无法播放")
+    props.store.showToast('当前列表所有歌曲都无法播放')
     state.isPlaying = false
-    state.statusText = "播放失败"
+    state.statusText = '播放失败'
     state.consecutiveSkipCount = 0
   }
 }
@@ -148,7 +147,10 @@ function onEnded() {
     @error="onAudioError"
   />
 
-  <div v-if="state.currentTrack && !state.playerOpen" class="mini-player">
+  <div
+    v-if="state.currentTrack && !state.playerOpen"
+    class="mini-player"
+  >
     <div
       class="mini-cover"
       role="button"
@@ -161,9 +163,7 @@ function onEnded() {
 
     <div class="mini-info">
       <div class="mini-song-row">
-        <span ref="songLabelRef" class="mini-song-measure" aria-hidden="true">{{
-          labelText
-        }}</span>
+        <span ref="songLabelRef" class="mini-song-measure" aria-hidden="true">{{ labelText }}</span>
         <span v-if="needsScroll" class="mini-song-track">
           <span class="mini-song-item">{{ labelText }}</span>
           <span class="mini-song-gap">•</span>
@@ -175,38 +175,20 @@ function onEnded() {
       <div class="mini-controls-row">
         <button
           class="mini-ctrl"
-          :title="
-            { list: '列表循环', single: '单曲循环', shuffle: '随机播放' }[
-              state.playMode
-            ]
-          "
+          :title="{ list: '列表循环', single: '单曲循环', shuffle: '随机播放' }[state.playMode]"
           @click="cyclePlayMode"
-        >
-          {{ playModeIcon }}
-        </button>
-        <button
-          class="mini-ctrl"
-          title="上一首"
-          @click="props.store.previousTrack"
-        >
-          ‹‹
-        </button>
+        >{{ playModeIcon }}</button>
+        <button class="mini-ctrl" title="上一首" @click="props.store.previousTrack">‹‹</button>
         <IconButton label="播放或暂停" tone="primary" @click.stop="togglePlay">
           {{ state.isPlaying ? "Ⅱ" : "▶" }}
         </IconButton>
-        <button class="mini-ctrl" title="下一首" @click="props.store.nextTrack">
-          ››
-        </button>
+        <button class="mini-ctrl" title="下一首" @click="props.store.nextTrack">››</button>
         <button
           class="mini-ctrl"
           :class="{ active: props.store.isFavorite(state.currentTrack) }"
-          :title="
-            props.store.isFavorite(state.currentTrack) ? '取消收藏' : '收藏'
-          "
+          :title="props.store.isFavorite(state.currentTrack) ? '取消收藏' : '收藏'"
           @click="props.store.toggleFavorite()"
-        >
-          {{ props.store.isFavorite(state.currentTrack) ? "♥" : "♡" }}
-        </button>
+        >{{ props.store.isFavorite(state.currentTrack) ? "♥" : "♡" }}</button>
       </div>
     </div>
   </div>
@@ -295,13 +277,12 @@ function onEnded() {
   right: 16px;
   bottom: 10px;
   z-index: 20;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 12px;
+  display: flex;
   align-items: center;
+  gap: 12px;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 18px;
-  padding: 10px;
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(22px);
   color: var(--text-primary);
@@ -322,30 +303,21 @@ function onEnded() {
 }
 
 .mini-info {
+  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: center;
+  gap: 5px;
 }
 
 .mini-song-row {
   position: relative;
   overflow: hidden;
   white-space: nowrap;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
-  );
+  text-align: center;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
 .mini-song-measure {
@@ -362,6 +334,7 @@ function onEnded() {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-align: center;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
@@ -385,34 +358,29 @@ function onEnded() {
 }
 
 @keyframes mini-marquee {
-  0% {
-    transform: translateX(8px);
-  }
-  100% {
-    transform: translateX(calc(-50% + 8px));
-  }
+  0% { transform: translateX(8px); }
+  100% { transform: translateX(calc(-50% + 8px)); }
 }
 
 .mini-controls-row {
   display: flex;
   align-items: center;
   gap: 4px;
+  justify-content: center;
 }
 
 .mini-ctrl {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   border: 0;
   border-radius: 999px;
   display: grid;
   place-items: center;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
-  transition:
-    background 0.16s ease,
-    color 0.16s ease;
+  transition: background 0.16s ease, color 0.16s ease;
 }
 
 .mini-ctrl:active {
@@ -424,9 +392,9 @@ function onEnded() {
 }
 
 .mini-controls-row :deep(.icon-button) {
-  width: 38px;
-  height: 38px;
-  font-size: 16px;
+  width: 34px;
+  height: 34px;
+  font-size: 14px;
 }
 
 .player-sheet {
@@ -562,6 +530,7 @@ function onEnded() {
 .lyrics-scroll {
   height: 90%;
   overflow-y: auto;
+  overflow-x: hidden;
   text-align: center;
   color: var(--text-tertiary);
   mask-image: linear-gradient(transparent, black 16%, black 84%, transparent);
